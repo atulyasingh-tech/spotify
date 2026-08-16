@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spotify – Web Player</title>
+  
+  <!-- Spotify SVG Favicon (Data URI) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231DB954'%3E%3Cpath d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.623.623 0 0 1-.858.207c-2.35-1.436-5.308-1.76-8.793-.963a.625.625 0 0 1-.28-1.218c3.813-.872 7.086-.503 9.724 1.116a.624.624 0 0 1 .207.858zm1.226-2.724a.78.78 0 0 1-1.073.257c-2.69-1.654-6.79-2.133-9.97-1.167a.781.781 0 0 1-.462-1.492c3.633-1.103 8.163-.574 11.248 1.328a.78.78 0 0 1 .257 1.074zm.135-2.834C14.72 8.94 8.78 8.74 5.34 9.784a.936.936 0 1 1-.546-1.792c3.96-1.202 10.534-.967 14.34 1.293a.936.936 0 0 1-.987 1.581z'/%3E%3C/svg%3E">
+
   <style>
     :root {
       --spotify-green: #1db954;
@@ -447,7 +451,7 @@
       text-shadow: 0 0 10px rgba(255,255,255,0.4);
     }
 
-    /* About Artist Card */
+    /* Artist Info Card */
     .artist-about-card {
       background: var(--bg-elevated);
       border-radius: 8px;
@@ -468,7 +472,7 @@
       line-height: 1.4;
     }
 
-    /* Fixed Bottom Player */
+    /* Bottom Player Bar */
     .now-playing-bar {
       height: 90px;
       background: var(--bg-black);
