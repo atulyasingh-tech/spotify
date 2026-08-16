@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spotify – Web Player</title>
   
-  <!-- Spotify SVG Favicon (Data URI) -->
+  <!-- Spotify SVG Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231DB954'%3E%3Cpath d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.623.623 0 0 1-.858.207c-2.35-1.436-5.308-1.76-8.793-.963a.625.625 0 0 1-.28-1.218c3.813-.872 7.086-.503 9.724 1.116a.624.624 0 0 1 .207.858zm1.226-2.724a.78.78 0 0 1-1.073.257c-2.69-1.654-6.79-2.133-9.97-1.167a.781.781 0 0 1-.462-1.492c3.633-1.103 8.163-.574 11.248 1.328a.78.78 0 0 1 .257 1.074zm.135-2.834C14.72 8.94 8.78 8.74 5.34 9.784a.936.936 0 1 1-.546-1.792c3.96-1.202 10.534-.967 14.34 1.293a.936.936 0 0 1-.987 1.581z'/%3E%3C/svg%3E">
 
   <style>
@@ -36,19 +36,10 @@
       flex-direction: column;
     }
 
-    /* Scrollbars */
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.25);
-      border-radius: 5px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.4);
-    }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 5px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
 
-    /* Layout */
     .app-layout {
       display: flex;
       flex: 1;
@@ -58,15 +49,15 @@
       overflow: hidden;
     }
 
-    /* Sidebar */
+    /* Left Sidebar */
     .sidebar {
-      width: 260px;
+      width: 270px;
       background-color: var(--bg-base);
       border-radius: 8px;
       display: flex;
       flex-direction: column;
       padding: 20px 16px;
-      gap: 20px;
+      gap: 18px;
       flex-shrink: 0;
     }
 
@@ -84,7 +75,7 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
 
     .nav-link {
@@ -107,38 +98,67 @@
     .sidebar-divider {
       height: 1px;
       background-color: var(--bg-highlight);
-      margin: 4px 8px;
+      margin: 4px 0;
     }
 
-    .filter-chips {
+    .create-playlist-btn {
       display: flex;
-      gap: 8px;
-      padding: 0 8px;
-      overflow-x: auto;
-    }
-
-    .chip {
-      background: var(--bg-highlight);
-      color: #fff;
-      font-size: 0.8rem;
-      padding: 6px 12px;
-      border-radius: 500px;
-      cursor: pointer;
-      white-space: nowrap;
+      align-items: center;
+      gap: 12px;
+      background: transparent;
       border: none;
-      transition: all 0.2s ease;
+      color: var(--text-subdued);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 4px;
+      transition: color 0.2s ease;
     }
 
-    .chip:hover, .chip.active {
+    .create-playlist-btn:hover {
+      color: #fff;
+    }
+
+    .create-playlist-btn .plus-box {
+      width: 28px;
+      height: 28px;
       background: #fff;
       color: #000;
-      font-weight: 600;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
     }
 
-    /* Main Content */
+    .playlists-scroll-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      flex: 1;
+      padding-left: 8px;
+    }
+
+    .playlist-item-link {
+      color: var(--text-subdued);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .playlist-item-link:hover, .playlist-item-link.active-item {
+      color: #fff;
+    }
+
+    /* Main Viewport */
     .main-viewport {
       flex: 1;
-      background: linear-gradient(180deg, #2b1e3a 0%, #121212 360px);
+      background: linear-gradient(180deg, #22223b 0%, #121212 360px);
       border-radius: 8px;
       overflow-y: auto;
       display: flex;
@@ -169,10 +189,7 @@
       border: 1px solid transparent;
     }
 
-    .search-bar-wrapper:focus-within {
-      border-color: #fff;
-    }
-
+    .search-bar-wrapper:focus-within { border-color: #fff; }
     .search-bar-wrapper input {
       background: transparent;
       border: none;
@@ -182,7 +199,210 @@
       width: 100%;
     }
 
-    /* Playlist View */
+    .content-feed {
+      padding: 24px 32px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .greeting-title {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+
+    /* Quick Grid (Top Shelf) */
+    .quick-shelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .quick-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .quick-card:hover { background: rgba(255, 255, 255, 0.2); }
+    .quick-card-thumb {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+
+    .quick-card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .quick-play-hover {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--spotify-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 14px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .quick-card:hover .quick-play-hover {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Song Grid */
+    .section-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-headline {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .song-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .song-card {
+      background: var(--bg-elevated);
+      padding: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .song-card:hover { background: var(--bg-highlight); }
+    .song-card.active-card { background: #2a2a2a; }
+
+    .card-cover {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .card-play-btn {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--spotify-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    }
+
+    .song-card:hover .card-play-btn, .song-card.active-card .card-play-btn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .song-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .song-card-title.playing-highlight { color: var(--spotify-green); }
+
+    .song-card-artist {
+      font-size: 0.8rem;
+      color: var(--text-subdued);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 10px;
+    }
+
+    .song-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+
+    .card-genre-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-subdued);
+      text-transform: uppercase;
+    }
+
+    .card-actions-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .like-btn, .add-playlist-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-subdued);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .like-btn:hover, .add-playlist-btn:hover { color: #fff; transform: scale(1.15); }
+    .like-btn.is-liked { color: var(--spotify-green); }
+
+    /* Playlist View (Shown only when clicked) */
     .playlist-hero {
       padding: 28px 32px;
       display: flex;
@@ -205,160 +425,24 @@
       flex-shrink: 0;
     }
 
-    .hero-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .hero-meta { display: flex; flex-direction: column; gap: 6px; }
+    .hero-meta .type-badge { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .hero-meta .hero-title { font-size: 2.6rem; font-weight: 900; letter-spacing: -1px; }
+    .hero-meta .hero-details { font-size: 0.85rem; color: var(--text-subdued); display: flex; gap: 6px; }
+    .hero-details .highlight { color: #fff; font-weight: 700; }
 
-    .hero-meta .type-badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
+    /* Table */
+    .tracklist-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .tracklist-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-subdued); font-size: 0.75rem; text-transform: uppercase; text-align: left; }
+    .tracklist-header th { padding: 10px 14px; }
+    .track-row { border-radius: 4px; cursor: pointer; transition: background 0.2s ease; }
+    .track-row:hover { background: rgba(255, 255, 255, 0.1); }
+    .track-row.active-row { background: rgba(255, 255, 255, 0.15); }
+    .track-row td { padding: 8px 14px; }
 
-    .hero-meta .hero-title {
-      font-size: 2.6rem;
-      font-weight: 900;
-      letter-spacing: -1px;
-      line-height: 1;
-    }
-
-    .hero-meta .hero-details {
-      font-size: 0.85rem;
-      color: var(--text-subdued);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .hero-details .highlight {
-      color: #fff;
-      font-weight: 700;
-    }
-
-    .content-feed {
-      padding: 0 32px 48px;
-    }
-
-    /* Track Table */
-    .tracklist-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-
-    .tracklist-header {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-subdued);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-align: left;
-    }
-
-    .tracklist-header th {
-      padding: 10px 14px;
-    }
-
-    .track-row {
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .track-row:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .track-row.active-row {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .track-row td {
-      padding: 8px 14px;
-    }
-
-    .col-num {
-      width: 36px;
-      color: var(--text-subdued);
-      text-align: center;
-    }
-
-    .col-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .row-thumb {
-      width: 40px;
-      height: 40px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: #fff;
-      flex-shrink: 0;
-    }
-
-    .row-meta {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .row-song-title {
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .row-song-title.active-text {
-      color: var(--spotify-green);
-    }
-
-    .row-song-artist {
-      font-size: 0.8rem;
-      color: var(--text-subdued);
-    }
-
-    .col-genre {
-      color: var(--text-subdued);
-      text-transform: capitalize;
-    }
-
-    .col-actions {
-      text-align: right;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 14px;
-      height: 50px;
-    }
-
-    .like-icon-btn {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: var(--text-subdued);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.15s ease, color 0.2s ease;
-    }
-
-    .like-icon-btn:hover {
-      color: #fff;
-      transform: scale(1.15);
-    }
-
-    .like-icon-btn.is-liked {
-      color: var(--spotify-green);
-    }
-
-    /* Right Side Panel: Now Playing Details & Lyrics */
+    /* Right Details & Lyrics Drawer */
     .right-sidebar {
-      width: 340px;
+      width: 320px;
       background-color: var(--bg-base);
       border-radius: 8px;
       display: flex;
@@ -367,15 +451,6 @@
       padding: 20px;
       gap: 20px;
       flex-shrink: 0;
-      transition: transform 0.3s ease;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 700;
-      font-size: 1rem;
     }
 
     .panel-art-card {
@@ -390,23 +465,6 @@
       box-shadow: 0 10px 24px rgba(0,0,0,0.5);
     }
 
-    .panel-track-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .panel-track-title {
-      font-size: 1.3rem;
-      font-weight: 800;
-    }
-
-    .panel-track-artist {
-      font-size: 0.9rem;
-      color: var(--text-subdued);
-    }
-
-    /* Lyrics Box */
     .lyrics-card {
       background: #33203f;
       border-radius: 8px;
@@ -416,60 +474,26 @@
       gap: 12px;
     }
 
-    .lyrics-title-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-
     .lyrics-stream-box {
-      max-height: 220px;
+      max-height: 200px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding-right: 4px;
+      gap: 10px;
     }
 
     .lyric-line {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       color: rgba(255, 255, 255, 0.4);
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
-    .lyric-line:hover {
-      color: rgba(255, 255, 255, 0.8);
-    }
-
     .lyric-line.active-lyric {
       color: #ffffff;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       text-shadow: 0 0 10px rgba(255,255,255,0.4);
-    }
-
-    /* Artist Info Card */
-    .artist-about-card {
-      background: var(--bg-elevated);
-      border-radius: 8px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .artist-about-card h4 {
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .artist-bio-text {
-      font-size: 0.8rem;
-      color: var(--text-subdued);
-      line-height: 1.4;
     }
 
     /* Bottom Player Bar */
@@ -484,82 +508,17 @@
       z-index: 200;
     }
 
-    .now-playing-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      width: 25%;
-      min-width: 180px;
-    }
+    .now-playing-left { display: flex; align-items: center; gap: 14px; width: 25%; min-width: 180px; }
+    .player-thumb-cover { width: 56px; height: 56px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.3rem; flex-shrink: 0; }
+    .player-track-info { display: flex; flex-direction: column; overflow: hidden; }
+    .player-track-title { font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .player-track-artist { font-size: 0.75rem; color: var(--text-subdued); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .player-thumb-cover {
-      width: 56px;
-      height: 56px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: #fff;
-      font-size: 1.4rem;
-      flex-shrink: 0;
-    }
-
-    .player-track-info {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .player-track-title {
-      font-size: 0.875rem;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .player-track-artist {
-      font-size: 0.75rem;
-      color: var(--text-subdued);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .now-playing-center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      width: 45%;
-      max-width: 600px;
-    }
-
-    .media-buttons {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .icon-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-subdued);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s ease;
-    }
-
-    .icon-btn:hover {
-      color: #fff;
-    }
-
-    .icon-btn.active-state {
-      color: var(--spotify-green);
-    }
+    .now-playing-center { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 45%; max-width: 600px; }
+    .media-buttons { display: flex; align-items: center; gap: 18px; }
+    .icon-btn { background: transparent; border: none; color: var(--text-subdued); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s ease; }
+    .icon-btn:hover { color: #fff; }
+    .icon-btn.active-state { color: var(--spotify-green); }
 
     .main-playback-toggle {
       width: 36px;
@@ -572,26 +531,10 @@
       justify-content: center;
       border: none;
       cursor: pointer;
-      transition: transform 0.15s ease;
     }
 
-    .main-playback-toggle:hover {
-      transform: scale(1.06);
-    }
-
-    .progress-bar-container {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .time-readout {
-      font-size: 0.7rem;
-      color: var(--text-subdued);
-      min-width: 36px;
-      text-align: center;
-    }
+    .progress-bar-container { width: 100%; display: flex; align-items: center; gap: 8px; }
+    .time-readout { font-size: 0.7rem; color: var(--text-subdued); min-width: 36px; text-align: center; }
 
     .slider {
       -webkit-appearance: none;
@@ -615,25 +558,9 @@
       transition: opacity 0.15s ease;
     }
 
-    .slider:hover::-webkit-slider-thumb {
-      opacity: 1;
-    }
-
-    .now-playing-right {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 16px;
-      width: 25%;
-      min-width: 150px;
-    }
-
-    .volume-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 110px;
-    }
+    .slider:hover::-webkit-slider-thumb { opacity: 1; }
+    .now-playing-right { display: flex; align-items: center; justify-content: flex-end; gap: 16px; width: 25%; min-width: 150px; }
+    .volume-box { display: flex; align-items: center; gap: 8px; width: 110px; }
   </style>
 </head>
 <body>
@@ -647,96 +574,66 @@
       </div>
 
       <ul class="nav-group">
-        <li class="nav-link active">
+        <li class="nav-link active" id="nav-home-btn">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 3.247a1 1 0 0 0-1 0L4 7.577V20h5v-6h6v6h5V7.577l-7.5-4.33z"/></svg>
-          Home
+          Home (All Songs)
         </li>
       </ul>
 
       <div class="sidebar-divider"></div>
 
-      <div class="filter-chips">
-        <button class="chip active" data-filter="all">All</button>
-        <button class="chip" data-filter="liked">Liked Songs</button>
-        <button class="chip" data-filter="electronic">Electronic</button>
-        <button class="chip" data-filter="ambient">Ambient</button>
+      <!-- Create Playlist Button -->
+      <button class="create-playlist-btn" id="create-playlist-btn">
+        <div class="plus-box">+</div>
+        <span>Create Playlist</span>
+      </button>
+
+      <div class="playlists-scroll-list" id="playlists-list">
+        <!-- Dynamic Custom Playlists Listed Here -->
       </div>
     </aside>
 
-    <!-- Main Music Table Viewport -->
-    <main class="main-viewport">
+    <!-- Main Viewport -->
+    <main class="main-viewport" id="main-viewport">
       <header class="top-nav">
         <div class="search-bar-wrapper">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="#a7a7a7"><path d="M10.533 1.27893C5.35215 1.27893 1.12598 5.5051 1.12598 10.686C1.12598 15.8668 5.35215 20.093 10.533 20.093C12.8055 20.093 14.8906 19.2897 16.5194 17.9461L21.0693 22.496C21.463 22.8897 22.0962 22.8897 22.4899 22.496C22.8836 22.1023 22.8836 21.4691 22.4899 21.0754L17.94 16.5255C19.2836 14.8967 20.0869 12.8116 20.0869 10.686C20.0869 5.5051 15.8608 1.27893 10.533 1.27893ZM3.12598 10.686C3.12598 6.60835 6.4553 3.27893 10.533 3.27893C14.6106 3.27893 17.94 6.60835 17.94 10.686C17.94 14.7636 14.6106 18.093 10.533 18.093C6.4553 18.093 3.12598 14.7636 3.12598 10.686Z"/></svg>
-          <input type="text" id="search-input" placeholder="Search title or artist...">
+          <input type="text" id="search-input" placeholder="Search for tracks or artists...">
         </div>
       </header>
 
-      <section class="playlist-hero">
-        <div class="playlist-hero-cover" id="hero-cover">♫</div>
-        <div class="hero-meta">
-          <span class="type-badge">Public Playlist</span>
-          <h1 class="hero-title" id="playlist-title">Featured Hits</h1>
-          <div class="hero-details">
-            <span class="highlight">Spotify Clone</span>
-            <span>•</span>
-            <span class="highlight" id="total-songs-count">0 songs</span>
-            <span>•</span>
-            <span id="total-duration-count">0 min 0 sec</span>
-          </div>
-        </div>
-      </section>
-
-      <div class="content-feed">
-        <table class="tracklist-table">
-          <thead>
-            <tr class="tracklist-header">
-              <th style="width: 36px; text-align: center;">#</th>
-              <th>Title</th>
-              <th>Genre</th>
-              <th style="text-align: right; padding-right: 24px;">Duration</th>
-            </tr>
-          </thead>
-          <tbody id="tracklist-body"></tbody>
-        </table>
-      </div>
+      <!-- Dynamic View Container: Home vs Playlist View -->
+      <div id="dynamic-content"></div>
     </main>
 
     <!-- Right Side Details & Synced Lyrics Panel -->
     <aside class="right-sidebar" id="right-panel">
-      <div class="panel-header">
-        <span>Now Playing Details</span>
-      </div>
-
+      <h3 style="font-size: 1rem; font-weight: 700;">Now Playing Details</h3>
       <div class="panel-art-card" id="panel-art">♫</div>
 
-      <div class="panel-track-meta">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
-          <div class="panel-track-title" id="panel-title">Select a track</div>
-          <div class="panel-track-artist" id="panel-artist">No artist</div>
+          <div style="font-size:1.2rem; font-weight:800;" id="panel-title">Select a track</div>
+          <div style="font-size:0.85rem; color:var(--text-subdued);" id="panel-artist">No artist</div>
         </div>
-        <button class="like-icon-btn" id="panel-like-btn" title="Like">
+        <button class="like-btn" id="panel-like-btn" title="Like">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         </button>
       </div>
 
-      <!-- Real-Time Timed Lyrics Box -->
+      <!-- Real-Time Synchronized Lyrics -->
       <div class="lyrics-card">
-        <div class="lyrics-title-bar">
-          <span>Lyrics</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-        </div>
+        <span style="font-weight:700; font-size:0.9rem;">Lyrics</span>
         <div class="lyrics-stream-box" id="lyrics-container">
           <div class="lyric-line active-lyric">Play a track to view synchronized lyrics...</div>
         </div>
       </div>
 
-      <!-- Artist & Album Details -->
-      <div class="artist-about-card">
-        <h4>About the Artist</h4>
-        <div class="artist-bio-text" id="artist-bio">
-          Click on any track in your library to explore song metadata, release info, and live lyrics.
-        </div>
+      <div style="background:var(--bg-elevated); border-radius:8px; padding:14px; display:flex; flex-direction:column; gap:6px;">
+        <span style="font-weight:700; font-size:0.9rem;">About the Artist</span>
+        <p style="font-size:0.8rem; color:var(--text-subdued); line-height:1.4;" id="artist-bio">
+          Click any song to stream audio, preview artist biography, and follow real-time lyrics.
+        </p>
       </div>
     </aside>
   </div>
@@ -749,7 +646,7 @@
         <div class="player-track-title" id="player-title">Select a track</div>
         <div class="player-track-artist" id="player-artist">Ready to stream</div>
       </div>
-      <button class="like-icon-btn" id="player-like-btn" title="Like">
+      <button class="like-btn" id="player-like-btn" title="Like">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
       </button>
     </div>
@@ -792,7 +689,7 @@
         title: "Midnight Signal",
         artist: "The Nocturnes",
         genre: "electronic",
-        bio: "The Nocturnes are an electronic synthwave duo renowned for dark atmospheric basslines and nostalgic soundscapes.",
+        bio: "The Nocturnes are an electronic duo renowned for atmospheric synthesizer textures and dark basslines.",
         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
         gradient: "linear-gradient(135deg, #450af5, #8b5cf6)",
         durationSec: 373,
@@ -814,7 +711,7 @@
         title: "Paper Planes",
         artist: "Kite Season",
         genre: "chill",
-        bio: "Kite Season crafts serene chillhop rhythms designed for rainy afternoons, deep focus, and relaxation.",
+        bio: "Kite Season crafts serene chillhop melodies designed for relaxed study sessions and rainy days.",
         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
         gradient: "linear-gradient(135deg, #e11d48, #fb7185)",
         durationSec: 367,
@@ -824,10 +721,7 @@
           { time: 18, text: "Fold the page and let it take the breeze" },
           { time: 35, text: "Floating high above the autumn trees" },
           { time: 55, text: "Paper planes across a cloudy sky" },
-          { time: 78, text: "Watching all our silent thoughts fly by" },
-          { time: 110, text: "(Chill Lo-Fi Groove)" },
-          { time: 140, text: "Drifting slowly where the wind will guide" },
-          { time: 175, text: "Nothing left to lose or hide..." }
+          { time: 78, text: "Watching all our silent thoughts fly by" }
         ]
       },
       {
@@ -835,7 +729,7 @@
         title: "Neon Harbor",
         artist: "Violet Static",
         genre: "electronic",
-        bio: "Violet Static mixes cyberpunk retro-wave with hard synth grooves inspired by coastal nightscapes.",
+        bio: "Violet Static mixes cyberpunk retro-wave with melodic electronic leads and hard rhythms.",
         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
         gradient: "linear-gradient(135deg, #0d9488, #2dd4bf)",
         durationSec: 380,
@@ -844,9 +738,7 @@
           { time: 0, text: "(Pulsing Arpeggiator)" },
           { time: 20, text: "Dockside reflections in teal and blue" },
           { time: 40, text: "Electric memories bringing me to you" },
-          { time: 65, text: "Neon Harbor shines until the dawn" },
-          { time: 90, text: "When the last dark tide has gone" },
-          { time: 120, text: "(Dynamic Synth Wave Solo)" }
+          { time: 65, text: "Neon Harbor shines until the dawn" }
         ]
       },
       {
@@ -854,7 +746,7 @@
         title: "Slow Tide",
         artist: "Marlow Bay",
         genre: "ambient",
-        bio: "Marlow Bay is an ambient producer creating cinematic ocean sounds paired with lush ambient sound design.",
+        bio: "Marlow Bay creates ambient ocean atmospheres combined with warm analog drone layers.",
         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
         gradient: "linear-gradient(135deg, #d97706, #fde68a)",
         durationSec: 392,
@@ -862,8 +754,7 @@
         lyrics: [
           { time: 0, text: "(Gentle ambient sea waves)" },
           { time: 30, text: "Listen to the rising tide" },
-          { time: 60, text: "Peace is on the other side" },
-          { time: 100, text: "Golden ripples softly glide" }
+          { time: 60, text: "Peace is on the other side" }
         ]
       },
       {
@@ -871,7 +762,7 @@
         title: "Copper Sky",
         artist: "Ada & the Owls",
         genre: "acoustic",
-        bio: "An indie-folk collective combining acoustic warmth with delicate melodies and introspective lyricism.",
+        bio: "An indie-folk collective combining acoustic warmth with delicate melodies and harmonies.",
         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
         gradient: "linear-gradient(135deg, #7c3aed, #c084fc)",
         durationSec: 415,
@@ -879,8 +770,7 @@
         lyrics: [
           { time: 0, text: "(Acoustic guitar picking)" },
           { time: 22, text: "Sunset turns to copper rust" },
-          { time: 48, text: "Leaving footprints in the dust" },
-          { time: 80, text: "Underneath the amber glow we stand" }
+          { time: 48, text: "Leaving footprints in the dust" }
         ]
       },
       {
@@ -888,7 +778,7 @@
         title: "Little Machines",
         artist: "Foxglove",
         genre: "electronic",
-        bio: "Foxglove produces crisp IDM beats that blend modular analog synthesizers with glitch percussion.",
+        bio: "Foxglove produces crisp electronic beats using modular modular synthesizers and percussion.",
         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
         gradient: "linear-gradient(135deg, #2563eb, #60a5fa)",
         durationSec: 299,
@@ -901,18 +791,25 @@
       }
     ];
 
+    // State Variables
     let currentTrackIndex = -1;
     let isPlaying = false;
-    let currentFilter = 'all';
+    let currentView = "home"; // "home" | "playlist"
+    let activePlaylistId = null;
+
     const audio = new Audio();
     audio.volume = 0.8;
 
     let likedTracks = new Set(JSON.parse(localStorage.getItem("spotify_clone_liked_tracks") || "[]"));
+    let userPlaylists = JSON.parse(localStorage.getItem("spotify_clone_playlists") || "[]");
 
     // DOM Elements
-    const tracklistBody = document.getElementById("tracklist-body");
-    const totalSongsCount = document.getElementById("total-songs-count");
-    const totalDurationCount = document.getElementById("total-duration-count");
+    const dynamicContent = document.getElementById("dynamic-content");
+    const navHomeBtn = document.getElementById("nav-home-btn");
+    const createPlaylistBtn = document.getElementById("create-playlist-btn");
+    const playlistsList = document.getElementById("playlists-list");
+    const searchInput = document.getElementById("search-input");
+
     const playBtn = document.getElementById("play-btn");
     const playIcon = document.getElementById("play-icon");
     const prevBtn = document.getElementById("prev-btn");
@@ -921,14 +818,12 @@
     const currentTimeEl = document.getElementById("current-time");
     const totalDurationEl = document.getElementById("total-duration");
     const volumeSlider = document.getElementById("volume-slider");
-    const searchInput = document.getElementById("search-input");
     const playerTitle = document.getElementById("player-title");
     const playerArtist = document.getElementById("player-artist");
     const playerCover = document.getElementById("player-cover");
     const playerLikeBtn = document.getElementById("player-like-btn");
     const panelLikeBtn = document.getElementById("panel-like-btn");
 
-    // Right Side Panel DOM Elements
     const panelArt = document.getElementById("panel-art");
     const panelTitle = document.getElementById("panel-title");
     const panelArtist = document.getElementById("panel-artist");
@@ -937,6 +832,11 @@
     const rightPanel = document.getElementById("right-panel");
     const lyricsToggleBtn = document.getElementById("lyrics-toggle-btn");
 
+    function getGreeting() {
+      const h = new Date().getHours();
+      return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+    }
+
     function formatTime(sec) {
       if (isNaN(sec)) return "0:00";
       const m = Math.floor(sec / 60);
@@ -944,136 +844,213 @@
       return `${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
-    function formatTotalTime(totalSeconds) {
-      const mins = Math.floor(totalSeconds / 60);
-      const secs = totalSeconds % 60;
-      return `${mins} min ${secs} sec`;
-    }
-
     function updateSliderFill(slider) {
       const val = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
       slider.style.background = `linear-gradient(to right, ${slider.id === 'seek-bar' ? '#1db954' : '#fff'} ${val}%, #4d4d4d ${val}%)`;
     }
 
-    function getActiveTracks() {
+    function getFilteredTracks() {
       const q = searchInput.value.toLowerCase().trim();
-      return TRACKS.filter(t => {
-        const matchesQuery = !q || t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q);
-        const matchesFilter = currentFilter === 'all' || 
-          (currentFilter === 'liked' && likedTracks.has(t.id)) ||
-          (t.genre === currentFilter);
-        return matchesQuery && matchesFilter;
+      if (!q) return TRACKS;
+      return TRACKS.filter(t => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q));
+    }
+
+    // Render Home View: Spotify Default Cards & Shelves
+    function renderHomeView() {
+      currentView = "home";
+      activePlaylistId = null;
+      navHomeBtn.classList.add("active");
+      renderSidebarPlaylists();
+
+      const tracks = getFilteredTracks();
+
+      dynamicContent.innerHTML = `
+        <div class="content-feed">
+          <div>
+            <h1 class="greeting-title">${getGreeting()}</h1>
+            <div class="quick-shelf">
+              ${tracks.slice(0, 6).map(t => `
+                <div class="quick-card" onclick="playTrackById(${t.id})">
+                  <div class="quick-card-thumb" style="background:${t.gradient}">${t.title.charAt(0)}</div>
+                  <div class="quick-card-title">${t.title}</div>
+                  <div class="quick-play-hover">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div>
+            <div class="section-header-row">
+              <h2 class="section-headline">All Songs</h2>
+            </div>
+            <div class="song-grid">
+              ${tracks.map(t => {
+                const isLiked = likedTracks.has(t.id);
+                const isActive = currentTrackIndex !== -1 && TRACKS[currentTrackIndex].id === t.id;
+                return `
+                  <div class="song-card ${isActive ? 'active-card' : ''}" onclick="playTrackById(${t.id})">
+                    <div class="card-cover" style="background:${t.gradient}">
+                      ${t.title.charAt(0)}
+                      <div class="card-play-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#000"><path d="${isActive && isPlaying ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z'}"/></svg>
+                      </div>
+                    </div>
+                    <div class="song-card-title ${isActive ? 'playing-highlight' : ''}">${t.title}</div>
+                    <div class="song-card-artist">${t.artist}</div>
+                    <div class="song-card-bottom">
+                      <span class="card-genre-tag">${t.genre}</span>
+                      <div class="card-actions-box">
+                        <button class="add-playlist-btn" onclick="event.stopPropagation(); promptAddToPlaylist(${t.id})" title="Add to Playlist">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        </button>
+                        <button class="like-btn ${isLiked ? 'is-liked' : ''}" onclick="event.stopPropagation(); toggleLike(${t.id})" title="Like">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="${isLiked ? '#1DB954' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render User Created Playlist View
+    function renderPlaylistView(playlistId) {
+      currentView = "playlist";
+      activePlaylistId = playlistId;
+      navHomeBtn.classList.remove("active");
+      renderSidebarPlaylists();
+
+      const playlist = userPlaylists.find(p => p.id === playlistId);
+      if (!playlist) return renderHomeView();
+
+      const playlistTracks = TRACKS.filter(t => playlist.trackIds.includes(t.id));
+      const totalSecs = playlistTracks.reduce((acc, t) => acc + (t.durationSec || 0), 0);
+
+      dynamicContent.innerHTML = `
+        <section class="playlist-hero">
+          <div class="playlist-hero-cover" style="background: linear-gradient(135deg, #1db954, #191414);">♫</div>
+          <div class="hero-meta">
+            <span class="type-badge">Playlist</span>
+            <h1 class="hero-title">${playlist.name}</h1>
+            <div class="hero-details">
+              <span class="highlight">Custom Playlist</span>
+              <span>•</span>
+              <span class="highlight">${playlistTracks.length} songs</span>
+              <span>•</span>
+              <span>${Math.floor(totalSecs / 60)} min ${totalSecs % 60} sec</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="content-feed" style="padding-top:0;">
+          <table class="tracklist-table">
+            <thead>
+              <tr class="tracklist-header">
+                <th style="width:36px; text-align:center;">#</th>
+                <th>Title</th>
+                <th>Genre</th>
+                <th style="text-align:right; padding-right:24px;">Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${playlistTracks.length === 0 ? `
+                <tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-subdued);">This playlist is empty. Go to Home to add songs using the (+) button!</td></tr>
+              ` : playlistTracks.map((t, idx) => {
+                const isLiked = likedTracks.has(t.id);
+                const isActive = currentTrackIndex !== -1 && TRACKS[currentTrackIndex].id === t.id;
+                return `
+                  <tr class="track-row ${isActive ? 'active-row' : ''}" onclick="playTrackById(${t.id})">
+                    <td style="text-align:center; color:var(--text-subdued);">${idx + 1}</td>
+                    <td>
+                      <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px; height:40px; border-radius:4px; background:${t.gradient}; display:flex; align-items:center; justify-content:center; font-weight:700;">${t.title.charAt(0)}</div>
+                        <div>
+                          <div style="font-weight:600; color:${isActive ? 'var(--spotify-green)' : '#fff'}">${t.title}</div>
+                          <div style="font-size:0.8rem; color:var(--text-subdued);">${t.artist}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td style="color:var(--text-subdued); text-transform:capitalize;">${t.genre}</td>
+                    <td style="text-align:right; padding-right:24px;">
+                      <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px;">
+                        <button class="like-btn ${isLiked ? 'is-liked' : ''}" onclick="event.stopPropagation(); toggleLike(${t.id})">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="${isLiked ? '#1DB954' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </button>
+                        <span style="color:var(--text-subdued); font-size:0.85rem;">${t.durationHint}</span>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderSidebarPlaylists() {
+      playlistsList.innerHTML = "";
+      userPlaylists.forEach(pl => {
+        const item = document.createElement("div");
+        item.className = `playlist-item-link ${activePlaylistId === pl.id ? 'active-item' : ''}`;
+        item.textContent = pl.name;
+        item.addEventListener("click", () => renderPlaylistView(pl.id));
+        playlistsList.appendChild(item);
       });
     }
 
-    function renderTracklist() {
-      tracklistBody.innerHTML = "";
-      const filtered = getActiveTracks();
+    // Playlist Creation Logic
+    createPlaylistBtn.addEventListener("click", () => {
+      const name = prompt("Enter a name for your new playlist:", `My Playlist #${userPlaylists.length + 1}`);
+      if (!name || !name.trim()) return;
 
-      totalSongsCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'song' : 'songs'}`;
-      const totalSecs = filtered.reduce((acc, t) => acc + (t.durationSec || 0), 0);
-      totalDurationCount.textContent = formatTotalTime(totalSecs);
+      const newPl = {
+        id: Date.now(),
+        name: name.trim(),
+        trackIds: []
+      };
+      userPlaylists.push(newPl);
+      localStorage.setItem("spotify_clone_playlists", JSON.stringify(userPlaylists));
+      renderPlaylistView(newPl.id);
+    });
 
-      filtered.forEach((track, idx) => {
-        const isLiked = likedTracks.has(track.id);
-        const isActive = currentTrackIndex !== -1 && TRACKS[currentTrackIndex].id === track.id;
-
-        const row = document.createElement("tr");
-        row.className = `track-row ${isActive ? 'active-row' : ''}`;
-        row.innerHTML = `
-          <td class="col-num">${idx + 1}</td>
-          <td>
-            <div class="col-title">
-              <div class="row-thumb" style="background: ${track.gradient}">${track.title.charAt(0)}</div>
-              <div class="row-meta">
-                <span class="row-song-title ${isActive ? 'active-text' : ''}">${track.title}</span>
-                <span class="row-song-artist">${track.artist}</span>
-              </div>
-            </div>
-          </td>
-          <td class="col-genre">${track.genre}</td>
-          <td>
-            <div class="col-actions">
-              <button class="like-icon-btn ${isLiked ? 'is-liked' : ''}" data-id="${track.id}" title="Like">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="${isLiked ? '#1DB954' : 'none'}" stroke="currentColor" stroke-width="2">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </button>
-              <span style="color: var(--text-subdued); font-size: 0.85rem;">${track.durationHint}</span>
-            </div>
-          </td>
-        `;
-
-        row.addEventListener("click", (e) => {
-          if (e.target.closest(".like-icon-btn")) return;
-          const actualIndex = TRACKS.findIndex(t => t.id === track.id);
-          if (currentTrackIndex === actualIndex) {
-            togglePlay();
-          } else {
-            loadAndPlayTrack(actualIndex);
-          }
-        });
-
-        tracklistBody.appendChild(row);
-      });
-
-      document.querySelectorAll(".col-actions .like-icon-btn").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          toggleLike(parseInt(btn.dataset.id));
-        });
-      });
-    }
-
-    function renderLyrics(track) {
-      lyricsContainer.innerHTML = "";
-      if (!track.lyrics || track.lyrics.length === 0) {
-        lyricsContainer.innerHTML = `<div class="lyric-line active-lyric">No lyrics available for this song.</div>`;
+    function promptAddToPlaylist(trackId) {
+      if (userPlaylists.length === 0) {
+        alert("You haven't created any playlists yet. Click '+ Create Playlist' on the sidebar!");
         return;
       }
+      const names = userPlaylists.map((p, i) => `${i + 1}. ${p.name}`).join("\n");
+      const chosen = prompt(`Choose a playlist number to add this song:\n${names}`);
+      const idx = parseInt(chosen) - 1;
 
-      track.lyrics.forEach((line) => {
-        const lineEl = document.createElement("div");
-        lineEl.className = "lyric-line";
-        lineEl.dataset.time = line.time;
-        lineEl.textContent = line.text;
-        lineEl.addEventListener("click", () => {
-          audio.currentTime = line.time;
-          if (audio.paused) {
-            audio.play();
-            isPlaying = true;
-            updateControlsUI();
-          }
-        });
-        lyricsContainer.appendChild(lineEl);
-      });
-    }
-
-    function syncLyrics(currentTime) {
-      if (currentTrackIndex === -1) return;
-      const track = TRACKS[currentTrackIndex];
-      if (!track.lyrics) return;
-
-      const lines = lyricsContainer.querySelectorAll(".lyric-line");
-      let activeIndex = -1;
-
-      for (let i = 0; i < track.lyrics.length; i++) {
-        if (currentTime >= track.lyrics[i].time) {
-          activeIndex = i;
+      if (!isNaN(idx) && userPlaylists[idx]) {
+        if (!userPlaylists[idx].trackIds.includes(trackId)) {
+          userPlaylists[idx].trackIds.push(trackId);
+          localStorage.setItem("spotify_clone_playlists", JSON.stringify(userPlaylists));
+          alert(`Added to "${userPlaylists[idx].name}"!`);
         } else {
-          break;
+          alert("This track is already in that playlist.");
         }
       }
-
-      lines.forEach((line, idx) => {
-        if (idx === activeIndex) {
-          line.classList.add("active-lyric");
-          line.scrollIntoView({ behavior: "smooth", block: "center" });
-        } else {
-          line.classList.remove("active-lyric");
-        }
-      });
     }
+
+    // Audio & Track Handling
+    window.playTrackById = function(trackId) {
+      const idx = TRACKS.findIndex(t => t.id === trackId);
+      if (idx !== -1) {
+        if (currentTrackIndex === idx) {
+          togglePlay();
+        } else {
+          loadAndPlayTrack(idx);
+        }
+      }
+    };
 
     function loadAndPlayTrack(index) {
       if (index < 0 || index >= TRACKS.length) return;
@@ -1086,7 +1063,6 @@
       playerCover.style.background = track.gradient;
       playerCover.textContent = track.title.charAt(0);
 
-      // Update Right Details Panel
       panelTitle.textContent = track.title;
       panelArtist.textContent = track.artist;
       panelArt.style.background = track.gradient;
@@ -1105,35 +1081,9 @@
       });
     }
 
-    function toggleLike(trackId) {
-      if (likedTracks.has(trackId)) {
-        likedTracks.delete(trackId);
-      } else {
-        likedTracks.add(trackId);
-      }
-      localStorage.setItem("spotify_clone_liked_tracks", JSON.stringify([...likedTracks]));
-      renderTracklist();
-      updateLikeButtons();
-    }
-
-    function updateLikeButtons() {
-      if (currentTrackIndex === -1) return;
-      const isLiked = likedTracks.has(TRACKS[currentTrackIndex].id);
-      
-      playerLikeBtn.classList.toggle("is-liked", isLiked);
-      playerLikeBtn.querySelector("svg").setAttribute("fill", isLiked ? "#1DB954" : "none");
-      
-      panelLikeBtn.classList.toggle("is-liked", isLiked);
-      panelLikeBtn.querySelector("svg").setAttribute("fill", isLiked ? "#1DB954" : "none");
-    }
-
     function togglePlay() {
       if (currentTrackIndex === -1) {
-        const visible = getActiveTracks();
-        if (visible.length > 0) {
-          const idx = TRACKS.findIndex(t => t.id === visible[0].id);
-          loadAndPlayTrack(idx);
-        }
+        loadAndPlayTrack(0);
         return;
       }
       if (audio.paused) {
@@ -1147,39 +1097,78 @@
     }
 
     function updateControlsUI() {
-      if (isPlaying) {
-        playIcon.innerHTML = `<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>`;
-      } else {
-        playIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
-      }
-      renderTracklist();
+      playIcon.innerHTML = isPlaying ? `<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>` : `<path d="M8 5v14l11-7z"/>`;
+      if (currentView === "home") renderHomeView();
+      else if (activePlaylistId) renderPlaylistView(activePlaylistId);
     }
 
-    playBtn.addEventListener("click", togglePlay);
-
-    nextBtn.addEventListener("click", () => {
-      const nextIndex = (currentTrackIndex + 1) % TRACKS.length;
-      loadAndPlayTrack(nextIndex);
-    });
-
-    prevBtn.addEventListener("click", () => {
-      if (audio.currentTime > 3) {
-        audio.currentTime = 0;
-      } else {
-        const prevIndex = (currentTrackIndex - 1 + TRACKS.length) % TRACKS.length;
-        loadAndPlayTrack(prevIndex);
+    function renderLyrics(track) {
+      lyricsContainer.innerHTML = "";
+      if (!track.lyrics || track.lyrics.length === 0) {
+        lyricsContainer.innerHTML = `<div class="lyric-line active-lyric">No lyrics available.</div>`;
+        return;
       }
+      track.lyrics.forEach(line => {
+        const el = document.createElement("div");
+        el.className = "lyric-line";
+        el.textContent = line.text;
+        el.onclick = () => {
+          audio.currentTime = line.time;
+          if (audio.paused) { audio.play(); isPlaying = true; updateControlsUI(); }
+        };
+        lyricsContainer.appendChild(el);
+      });
+    }
+
+    function syncLyrics(time) {
+      if (currentTrackIndex === -1 || !TRACKS[currentTrackIndex].lyrics) return;
+      const lyrics = TRACKS[currentTrackIndex].lyrics;
+      const lines = lyricsContainer.querySelectorAll(".lyric-line");
+      let activeIdx = -1;
+      for (let i = 0; i < lyrics.length; i++) {
+        if (time >= lyrics[i].time) activeIdx = i;
+        else break;
+      }
+      lines.forEach((l, idx) => {
+        if (idx === activeIdx) {
+          l.classList.add("active-lyric");
+          l.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          l.classList.remove("active-lyric");
+        }
+      });
+    }
+
+    window.toggleLike = function(trackId) {
+      if (likedTracks.has(trackId)) likedTracks.delete(trackId);
+      else likedTracks.add(trackId);
+      localStorage.setItem("spotify_clone_liked_tracks", JSON.stringify([...likedTracks]));
+      updateLikeButtons();
+      if (currentView === "home") renderHomeView();
+      else if (activePlaylistId) renderPlaylistView(activePlaylistId);
+    };
+
+    function updateLikeButtons() {
+      if (currentTrackIndex === -1) return;
+      const isLiked = likedTracks.has(TRACKS[currentTrackIndex].id);
+      playerLikeBtn.classList.toggle("is-liked", isLiked);
+      playerLikeBtn.querySelector("svg").setAttribute("fill", isLiked ? "#1DB954" : "none");
+      panelLikeBtn.classList.toggle("is-liked", isLiked);
+      panelLikeBtn.querySelector("svg").setAttribute("fill", isLiked ? "#1DB954" : "none");
+    }
+
+    // Media Buttons
+    playBtn.addEventListener("click", togglePlay);
+    nextBtn.addEventListener("click", () => loadAndPlayTrack((currentTrackIndex + 1) % TRACKS.length));
+    prevBtn.addEventListener("click", () => {
+      if (audio.currentTime > 3) audio.currentTime = 0;
+      else loadAndPlayTrack((currentTrackIndex - 1 + TRACKS.length) % TRACKS.length);
     });
 
-    audio.addEventListener("ended", () => {
-      const nextIndex = (currentTrackIndex + 1) % TRACKS.length;
-      loadAndPlayTrack(nextIndex);
-    });
-
+    audio.addEventListener("ended", () => loadAndPlayTrack((currentTrackIndex + 1) % TRACKS.length));
     audio.addEventListener("timeupdate", () => {
       if (!isNaN(audio.duration) && audio.duration > 0) {
-        const progress = (audio.currentTime / audio.duration) * 100;
-        seekBar.value = progress;
+        seekBar.value = (audio.currentTime / audio.duration) * 100;
         currentTimeEl.textContent = formatTime(audio.currentTime);
         updateSliderFill(seekBar);
         syncLyrics(audio.currentTime);
@@ -1203,43 +1192,27 @@
     });
 
     playerLikeBtn.addEventListener("click", () => {
-      if (currentTrackIndex !== -1) {
-        toggleLike(TRACKS[currentTrackIndex].id);
-      }
+      if (currentTrackIndex !== -1) toggleLike(TRACKS[currentTrackIndex].id);
     });
 
     panelLikeBtn.addEventListener("click", () => {
-      if (currentTrackIndex !== -1) {
-        toggleLike(TRACKS[currentTrackIndex].id);
-      }
+      if (currentTrackIndex !== -1) toggleLike(TRACKS[currentTrackIndex].id);
     });
 
-    // Toggle Right-Side Panel via Bottom Icon
     lyricsToggleBtn.addEventListener("click", () => {
-      if (rightPanel.style.display === "none") {
-        rightPanel.style.display = "flex";
-        lyricsToggleBtn.classList.add("active-state");
-      } else {
-        rightPanel.style.display = "none";
-        lyricsToggleBtn.classList.remove("active-state");
-      }
+      rightPanel.style.display = (rightPanel.style.display === "none") ? "flex" : "none";
+      lyricsToggleBtn.classList.toggle("active-state", rightPanel.style.display !== "none");
     });
 
-    document.querySelectorAll(".chip").forEach(chip => {
-      chip.addEventListener("click", () => {
-        document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
-        currentFilter = chip.dataset.filter;
-        renderTracklist();
-      });
+    navHomeBtn.addEventListener("click", renderHomeView);
+    searchInput.addEventListener("input", () => {
+      if (currentView === "home") renderHomeView();
     });
 
-    searchInput.addEventListener("input", renderTracklist);
-
-    // Initial Render
+    // Initial Setup
     updateSliderFill(seekBar);
     updateSliderFill(volumeSlider);
-    renderTracklist();
+    renderHomeView();
   </script>
 </body>
 </html>
