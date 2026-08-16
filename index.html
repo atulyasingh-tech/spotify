@@ -91,9 +91,7 @@
       transition: color 0.2s ease;
     }
 
-    .nav-link:hover, .nav-link.active {
-      color: #fff;
-    }
+    .nav-link:hover, .nav-link.active { color: #fff; }
 
     .sidebar-divider {
       height: 1px;
@@ -116,9 +114,7 @@
       transition: color 0.2s ease;
     }
 
-    .create-playlist-btn:hover {
-      color: #fff;
-    }
+    .create-playlist-btn:hover { color: #fff; }
 
     .create-playlist-btn .plus-box {
       width: 28px;
@@ -151,9 +147,7 @@
       text-overflow: ellipsis;
     }
 
-    .playlist-item-link:hover, .playlist-item-link.active-item {
-      color: #fff;
-    }
+    .playlist-item-link:hover, .playlist-item-link.active-item { color: #fff; }
 
     /* Main Viewport */
     .main-viewport {
@@ -213,7 +207,7 @@
       margin-bottom: 16px;
     }
 
-    /* Quick Grid (Top Shelf) */
+    /* Quick Shelf */
     .quick-shelf {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -274,7 +268,7 @@
       transform: translateY(0);
     }
 
-    /* Song Grid */
+    /* Songs Grid */
     .section-header-row {
       display: flex;
       align-items: center;
@@ -402,7 +396,7 @@
     .like-btn:hover, .add-playlist-btn:hover { color: #fff; transform: scale(1.15); }
     .like-btn.is-liked { color: var(--spotify-green); }
 
-    /* Playlist View (Shown only when clicked) */
+    /* Playlist Hero */
     .playlist-hero {
       padding: 28px 32px;
       display: flex;
@@ -431,7 +425,7 @@
     .hero-meta .hero-details { font-size: 0.85rem; color: var(--text-subdued); display: flex; gap: 6px; }
     .hero-details .highlight { color: #fff; font-weight: 700; }
 
-    /* Table */
+    /* Table View */
     .tracklist-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     .tracklist-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-subdued); font-size: 0.75rem; text-transform: uppercase; text-align: left; }
     .tracklist-header th { padding: 10px 14px; }
@@ -440,16 +434,16 @@
     .track-row.active-row { background: rgba(255, 255, 255, 0.15); }
     .track-row td { padding: 8px 14px; }
 
-    /* Right Details & Lyrics Drawer */
+    /* Right Details, Visualizer & Synced Lyrics */
     .right-sidebar {
-      width: 320px;
+      width: 330px;
       background-color: var(--bg-base);
       border-radius: 8px;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
       padding: 20px;
-      gap: 20px;
+      gap: 16px;
       flex-shrink: 0;
     }
 
@@ -465,6 +459,23 @@
       box-shadow: 0 10px 24px rgba(0,0,0,0.5);
     }
 
+    /* Canvas Audio Visualizer */
+    .visualizer-container {
+      width: 100%;
+      height: 48px;
+      background: #181818;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #visualizer-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
     .lyrics-card {
       background: #33203f;
       border-radius: 8px;
@@ -475,7 +486,7 @@
     }
 
     .lyrics-stream-box {
-      max-height: 200px;
+      max-height: 180px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -492,7 +503,7 @@
 
     .lyric-line.active-lyric {
       color: #ffffff;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       text-shadow: 0 0 10px rgba(255,255,255,0.4);
     }
 
@@ -516,7 +527,7 @@
 
     .now-playing-center { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 45%; max-width: 600px; }
     .media-buttons { display: flex; align-items: center; gap: 18px; }
-    .icon-btn { background: transparent; border: none; color: var(--text-subdued); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s ease; }
+    .icon-btn { background: transparent; border: none; color: var(--text-subdued); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s ease; font-size: 0.8rem; font-weight: 700; }
     .icon-btn:hover { color: #fff; }
     .icon-btn.active-state { color: var(--spotify-green); }
 
@@ -559,8 +570,8 @@
     }
 
     .slider:hover::-webkit-slider-thumb { opacity: 1; }
-    .now-playing-right { display: flex; align-items: center; justify-content: flex-end; gap: 16px; width: 25%; min-width: 150px; }
-    .volume-box { display: flex; align-items: center; gap: 8px; width: 110px; }
+    .now-playing-right { display: flex; align-items: center; justify-content: flex-end; gap: 14px; width: 25%; min-width: 180px; }
+    .volume-box { display: flex; align-items: center; gap: 8px; width: 90px; }
   </style>
 </head>
 <body>
@@ -602,7 +613,6 @@
         </div>
       </header>
 
-      <!-- Dynamic View Container: Home vs Playlist View -->
       <div id="dynamic-content"></div>
     </main>
 
@@ -611,9 +621,14 @@
       <h3 style="font-size: 1rem; font-weight: 700;">Now Playing Details</h3>
       <div class="panel-art-card" id="panel-art">♫</div>
 
+      <!-- Real-time Web Audio API Spectrum Visualizer -->
+      <div class="visualizer-container">
+        <canvas id="visualizer-canvas" width="300" height="48"></canvas>
+      </div>
+
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
-          <div style="font-size:1.2rem; font-weight:800;" id="panel-title">Select a track</div>
+          <div style="font-size:1.15rem; font-weight:800;" id="panel-title">Select a track</div>
           <div style="font-size:0.85rem; color:var(--text-subdued);" id="panel-artist">No artist</div>
         </div>
         <button class="like-btn" id="panel-like-btn" title="Like">
@@ -621,7 +636,7 @@
         </button>
       </div>
 
-      <!-- Real-Time Synchronized Lyrics -->
+      <!-- Synchronized Lyrics -->
       <div class="lyrics-card">
         <span style="font-weight:700; font-size:0.9rem;">Lyrics</span>
         <div class="lyrics-stream-box" id="lyrics-container">
@@ -638,7 +653,7 @@
     </aside>
   </div>
 
-  <!-- Bottom Player Engine -->
+  <!-- Bottom Player Bar -->
   <footer class="now-playing-bar">
     <div class="now-playing-left">
       <div class="player-thumb-cover" id="player-cover"></div>
@@ -672,7 +687,10 @@
     </div>
 
     <div class="now-playing-right">
-      <button class="icon-btn active-state" id="lyrics-toggle-btn" title="Lyrics">
+      <!-- Playback Speed Control -->
+      <button class="icon-btn" id="speed-btn" title="Change Playback Speed">1x</button>
+      
+      <button class="icon-btn active-state" id="lyrics-toggle-btn" title="Lyrics & Details">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
       </button>
       <div class="volume-box">
@@ -791,17 +809,92 @@
       }
     ];
 
-    // State Variables
     let currentTrackIndex = -1;
     let isPlaying = false;
-    let currentView = "home"; // "home" | "playlist"
+    let currentView = "home";
     let activePlaylistId = null;
+    let currentSpeed = 1.0;
+    const speedSteps = [1.0, 1.25, 1.5, 0.75];
 
+    // Audio Object with Cross-Origin for Web Audio Analyzer
     const audio = new Audio();
+    audio.crossOrigin = "anonymous";
     audio.volume = 0.8;
 
     let likedTracks = new Set(JSON.parse(localStorage.getItem("spotify_clone_liked_tracks") || "[]"));
     let userPlaylists = JSON.parse(localStorage.getItem("spotify_clone_playlists") || "[]");
+
+    // Web Audio API Visualizer Setup
+    let audioCtx, analyser, sourceNode;
+    let isAudioCtxInitialized = false;
+
+    function initAudioContext() {
+      if (isAudioCtxInitialized) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        sourceNode = audioCtx.createMediaElementSource(audio);
+        sourceNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        isAudioCtxInitialized = true;
+        drawVisualizer();
+      } catch (e) {
+        console.log("Web Audio Context not allowed or initialized yet.");
+      }
+    }
+
+    function drawVisualizer() {
+      const canvas = document.getElementById("visualizer-canvas");
+      if (!canvas || !analyser) return;
+      const ctx = canvas.getContext("2d");
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function renderFrame() {
+        requestAnimationFrame(renderFrame);
+        analyser.getByteFrequencyData(dataArray);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const barWidth = (canvas.width / bufferLength) * 1.5;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const barHeight = (dataArray[i] / 255) * canvas.height;
+          const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
+          gradient.addColorStop(0, "#1db954");
+          gradient.addColorStop(1, "#1ed760");
+
+          ctx.fillStyle = gradient;
+          ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+          x += barWidth;
+        }
+      }
+      renderFrame();
+    }
+
+    // Media Session API Setup
+    function updateMediaSession(track) {
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: track.title,
+          artist: track.artist,
+          album: "Spotify Web Clone",
+          artwork: [
+            { src: 'https://placehold.co/512x512/1db954/white?text=' + track.title.charAt(0), sizes: '512x512', type: 'image/png' }
+          ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => togglePlay());
+        navigator.mediaSession.setActionHandler('pause', () => togglePlay());
+        navigator.mediaSession.setActionHandler('previoustrack', () => prevBtn.click());
+        navigator.mediaSession.setActionHandler('nexttrack', () => nextBtn.click());
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          if (details.seekTime) audio.currentTime = details.seekTime;
+        });
+      }
+    }
 
     // DOM Elements
     const dynamicContent = document.getElementById("dynamic-content");
@@ -823,6 +916,7 @@
     const playerCover = document.getElementById("player-cover");
     const playerLikeBtn = document.getElementById("player-like-btn");
     const panelLikeBtn = document.getElementById("panel-like-btn");
+    const speedBtn = document.getElementById("speed-btn");
 
     const panelArt = document.getElementById("panel-art");
     const panelTitle = document.getElementById("panel-title");
@@ -855,7 +949,6 @@
       return TRACKS.filter(t => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q));
     }
 
-    // Render Home View: Spotify Default Cards & Shelves
     function renderHomeView() {
       currentView = "home";
       activePlaylistId = null;
@@ -919,7 +1012,6 @@
       `;
     }
 
-    // Render User Created Playlist View
     function renderPlaylistView(playlistId) {
       currentView = "playlist";
       activePlaylistId = playlistId;
@@ -1005,16 +1097,11 @@
       });
     }
 
-    // Playlist Creation Logic
     createPlaylistBtn.addEventListener("click", () => {
       const name = prompt("Enter a name for your new playlist:", `My Playlist #${userPlaylists.length + 1}`);
       if (!name || !name.trim()) return;
 
-      const newPl = {
-        id: Date.now(),
-        name: name.trim(),
-        trackIds: []
-      };
+      const newPl = { id: Date.now(), name: name.trim(), trackIds: [] };
       userPlaylists.push(newPl);
       localStorage.setItem("spotify_clone_playlists", JSON.stringify(userPlaylists));
       renderPlaylistView(newPl.id);
@@ -1040,17 +1127,43 @@
       }
     }
 
-    // Audio & Track Handling
     window.playTrackById = function(trackId) {
       const idx = TRACKS.findIndex(t => t.id === trackId);
       if (idx !== -1) {
-        if (currentTrackIndex === idx) {
-          togglePlay();
-        } else {
-          loadAndPlayTrack(idx);
-        }
+        if (currentTrackIndex === idx) togglePlay();
+        else crossfadeToTrack(idx);
       }
     };
+
+    // Crossfade Simulator (Smooth volume fade-out -> load -> fade-in)
+    function crossfadeToTrack(nextIndex) {
+      initAudioContext();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+      if (!isPlaying || audio.paused) {
+        loadAndPlayTrack(nextIndex);
+        return;
+      }
+
+      const targetVol = parseFloat(volumeSlider.value);
+      let fadeOutInterval = setInterval(() => {
+        if (audio.volume > 0.1) {
+          audio.volume = Math.max(0, audio.volume - 0.15);
+        } else {
+          clearInterval(fadeOutInterval);
+          loadAndPlayTrack(nextIndex);
+          audio.volume = 0;
+          let fadeInInterval = setInterval(() => {
+            if (audio.volume < targetVol - 0.1) {
+              audio.volume = Math.min(targetVol, audio.volume + 0.15);
+            } else {
+              audio.volume = targetVol;
+              clearInterval(fadeInInterval);
+            }
+          }, 30);
+        }
+      }, 30);
+    }
 
     function loadAndPlayTrack(index) {
       if (index < 0 || index >= TRACKS.length) return;
@@ -1058,6 +1171,7 @@
       const track = TRACKS[currentTrackIndex];
 
       audio.src = track.src;
+      audio.playbackRate = currentSpeed;
       playerTitle.textContent = track.title;
       playerArtist.textContent = track.artist;
       playerCover.style.background = track.gradient;
@@ -1071,6 +1185,7 @@
 
       renderLyrics(track);
       updateLikeButtons();
+      updateMediaSession(track);
 
       audio.play().then(() => {
         isPlaying = true;
@@ -1082,6 +1197,9 @@
     }
 
     function togglePlay() {
+      initAudioContext();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
       if (currentTrackIndex === -1) {
         loadAndPlayTrack(0);
         return;
@@ -1157,15 +1275,23 @@
       panelLikeBtn.querySelector("svg").setAttribute("fill", isLiked ? "#1DB954" : "none");
     }
 
-    // Media Buttons
-    playBtn.addEventListener("click", togglePlay);
-    nextBtn.addEventListener("click", () => loadAndPlayTrack((currentTrackIndex + 1) % TRACKS.length));
-    prevBtn.addEventListener("click", () => {
-      if (audio.currentTime > 3) audio.currentTime = 0;
-      else loadAndPlayTrack((currentTrackIndex - 1 + TRACKS.length) % TRACKS.length);
+    // Playback Speed Toggle
+    speedBtn.addEventListener("click", () => {
+      let currentIdx = speedSteps.indexOf(currentSpeed);
+      currentSpeed = speedSteps[(currentIdx + 1) % speedSteps.length];
+      audio.playbackRate = currentSpeed;
+      speedBtn.textContent = `${currentSpeed}x`;
     });
 
-    audio.addEventListener("ended", () => loadAndPlayTrack((currentTrackIndex + 1) % TRACKS.length));
+    // Media Buttons
+    playBtn.addEventListener("click", togglePlay);
+    nextBtn.addEventListener("click", () => crossfadeToTrack((currentTrackIndex + 1) % TRACKS.length));
+    prevBtn.addEventListener("click", () => {
+      if (audio.currentTime > 3) audio.currentTime = 0;
+      else crossfadeToTrack((currentTrackIndex - 1 + TRACKS.length) % TRACKS.length);
+    });
+
+    audio.addEventListener("ended", () => crossfadeToTrack((currentTrackIndex + 1) % TRACKS.length));
     audio.addEventListener("timeupdate", () => {
       if (!isNaN(audio.duration) && audio.duration > 0) {
         seekBar.value = (audio.currentTime / audio.duration) * 100;
